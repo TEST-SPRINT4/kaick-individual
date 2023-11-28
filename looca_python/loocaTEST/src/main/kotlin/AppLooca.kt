@@ -23,7 +23,7 @@ fun main(args: Array<String>) {
 
         override fun run() {
             cont++
-            repositorio.insertListagem(totalProcessos = grupoDeProcessos.totalProcessos)
+            repositorio.insertListagem(dataHora, grupoDeProcessos.totalProcessos)
             println("LISTAGEM DE PROCESSOS: $cont")
             println("Data e Hora: " + dataHora.format(formatter))
             for (processo in processos) {

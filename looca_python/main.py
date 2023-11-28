@@ -1,22 +1,25 @@
 import time
 import psutil
-import pymysql
+import pymssql
+from datetime import datetime
+
+# Configurações SQL Server
+sql_server_cnx = pymssql.connect(
+    server='52.45.220.247',
+    database='test',
+    user='sa',
+    password='sptech'
+)
+cursor_sql_server = sql_server_cnx.cursor()
 
 while True:
+    
     for i in [1, 2, 3]:
-
-        mydb = pymysql.connect(
-            host='localhost',
-            port=3306,
-            user='root',
-            password='sptech',
-            database='test'
-        )
-
+        dia = datetime.now()
         cpuPercent = psutil.cpu_percent()
         ramPercent = psutil.virtual_memory().percent
 
-        if mydb.open:
+        if sql_server_cnx:
             print("|               Banco conectado               |\n----------------------------------------- ")
             print("-------------------------------------------")
             print("| Porcentagem de uso de CPU: {:.2f}%".format(cpuPercent), " |\n------------------------------------------- ")
@@ -27,17 +30,19 @@ while True:
             dadosInsertCpu = [cpuPercent]
             dadosInsertRam = [ramPercent]
 
-            mycursor = mydb.cursor()
+            sql22_sql_server = "INSERT INTO RegistrosTRUSTED (dadosCapturados, dataHora, fkComponente, fkIdServidor) VALUES (%s, %s, %s, %s)"
+            values22_sql_server = (dadosInsertCpu, dia.strftime('%Y-%m-%d %H:%M:%S'), 1, 3)
 
-            sql_query_cpu = "INSERT INTO RegistrosTRUSTED (dadosCapturados, dataHora, fkComponente, fkIdservidor) VALUES (%s, now(), 1, 1)"
-            mycursor.execute(sql_query_cpu, dadosInsertCpu)
+            sql33_sql_server = "INSERT INTO RegistrosTRUSTED (dadosCapturados, dataHora, fkComponente, fkIdServidor) VALUES (%s, %s, %s, %s)"
+            values33_sql_server = (dadosInsertRam, dia.strftime('%Y-%m-%d %H:%M:%S'), 2, 3)
 
-            sql_query_ram = "INSERT INTO RegistrosTRUSTED (dadosCapturados, dataHora, fkComponente, fkIdservidor) VALUES (%s, now(), 2, 1)"
-            mycursor.execute(sql_query_ram, dadosInsertRam)
+            try:
+                cursor_sql_server.execute(sql22_sql_server, values22_sql_server)
+                cursor_sql_server.execute(sql33_sql_server, values33_sql_server)
+                sql_server_cnx.commit()
 
-            mydb.commit()
+            except Exception as e:
+                print(f"Erro ao inserir no SQL Server: {e}")
 
-            mycursor.close()
+    time.sleep(5)
 
-        mydb.close()
-        time.sleep(5)
