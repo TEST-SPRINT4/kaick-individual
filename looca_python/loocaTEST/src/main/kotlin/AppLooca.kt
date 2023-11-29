@@ -43,8 +43,7 @@ fun main(args: Array<String>) {
             println("Total de Processos em execução: ${grupoDeProcessos.totalProcessos}")
         }
 
-    },
-        0, 10000)
+    },0, 1000)
 
 }
 
